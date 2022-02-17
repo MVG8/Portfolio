@@ -1,0 +1,229 @@
+Подключение к SQLiteStudio:
+win+R = cmd
+c:\Users\Валерий>cd C:\sqlite
+C:\sqlite>sqlite3.exe
+sqlite>    Ура мы подключились!!!!!
+Выход ctrl + c или quit
+
+SQLite нечувствителен к регистру , но есть некоторые команды, чувствительные к регистру, такие как GLOB и glob имеют различное значение в операциях SQLite.
+
+#Для перечисления доступных точечных команд
+sqlite> .help
+sqlite> .help -- This is a single line comment
+
+############## Создание базы данных #############
+
+Чтобы создать новую базу данных <comment_section>, то оператор sqlite3 будет выглядеть следующим образом:
+
+C:\sqlite>sqlite3 comment_section.db
+
+Если не указать название,то sqlite создаст временную базу данных
+***************************************************
+
+############# Создание таблицы ###################
+
+CREATE TABLE comments (
+	post_id INTEGER NOT NULL,
+	 PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL,
+		email TEXT NOT NULL,
+		website_url TEXT NULL,
+		comment TEXT NOT NULL);
+
+NOT NULL -	обеспечит уверенность что ячейка не будет иметь пустое значение
+PRIMARY KEY и AUTOINCREMENT расширяют возможности поля post_id
+
+Убедится что таблица создана:
+	.tables
+Структура таблицы:
+	.schema comments
+***************************************************
+
+
+########## Вставка данных  INSERT #################
+
+
+
+VALUES ( 'Shivam Mamgain', 'xyz@gmail.com ',
+
+'shivammg.blogspot.com', 'Great tutorial for beginners.' ),
+
+        ( 'Milovanov Valery', 'mail.com',
+
+'milovanov.blogspot.com', 'Good day' );
+
+Указывать значение для post_id не нужно т.к. оно сформируется автоматически благодаря настройке AUTOINCREMENT.
+*******************************************************
+
+
+############### ВЫБОРКА SELECT #####################
+SELECT post_id, name, email, website_url, comment
+FROM comments;
+
+тот же запрос но имеет другой вид:
+SELECT *
+FROM comments;
+
+В результате из таблицы будут извлечены все строки. Результат может выглядеть без разграничения по колонкам и без заголовка. Чтобы это исправить выполняем:
+	.show
+Для отображения шапки введите 
+	.headers ON.
+Для отображения колонок выполните команду 
+	.mode column(было значение list).
+
+Выполняем SELECT запрос ещё раз.
+SELECT *
+FROM comments;
+*******************************************************
+
+
+
+############## Oбновление UPDATE #################
+
+Предположим, что поле email для пользователя ‘Shivam Mamgain’ необходимо изменить на ‘ZYX@email.com’. Выполняем следующую команду:
+
+
+UPDATE comments
+
+SET email = 'ZYX@email.com'
+
+WHERE name = 'Shivam Mamgain';
+
+Значение в колонке name может быть не уникально, так что в результате работы команды может быть затронуто более одной строки. Для всех пользователей, где значение name = ‘Shivam Mamgain’, поле email будет изменено на ‘zyx@email.com’. Для изменения какой-то конкретной строки следует её отследить по полю post_id. Мы его определили как PRIMARY KEY, что обеспечивает уникальность значения.
+
+UPDATE comments
+
+SET email = 'SUPER@email.com'
+
+WHERE post_id = 1;
+
+********************************************************************
+
+
+
+################ Удаление DELITE ###############################
+
+Для выполнения команды DELETE нужно так же указать условие.
+
+К примеру нам необходимо удалить комментарий с post_id = 9. Выполняем команду:
+
+	DELETE FROM comments
+	WHERE post_id = 2;
+
+Для удаления комментариев пользователей ‘Bart Simpson’ и ‘Homer Simpson’ выполним:
+
+	DELETE FROM comments
+	WHERE name = 'Bart Simpson' OR name = 'Homer Simpson';
+**************************************************************
+
+
+############# ИЗМЕНЕНИ СТРУКТУРЫ. ALTER ####################
+
+Для добавления новой колонки следует использовать команду ALTER. К примеру введём поле username. Выполняем команду:
+
+	ALTER TABLE comments
+	ADD COLUMN username TEXT;
+
+Данная команда создаст новое текстовое поле в таблице comments. Для всех сток в качестве значения будет выставлено NULL.
+
+Так же мы можем использовать команду ALTER для переименования таблицы comments на Coms.
+
+	ALTER TABLE comments
+    RENAME TO Coms;
+*******************************************************************
+
+
+############# УДАЛЕНИЕ ТАБЛИЦЫ. DROP TABLE #####################
+
+	DROP TABLE Coms;
+	.tables
+	.quit
+
+
+
+ВЫГРУЗИТЬ(Экспортировать) полную базу данных в текстовый файл, используя следующую команду SQLite в командной строке.	
+
+	C:\sqlite>sqlite3 testDB.db .dump > testDB.sql
+
+ЗАГРУЗИТЬ(Импортировать) базу данных
+
+	C:\sqlite>sqlite3 testDB.db < testDB.sql	
+
+
+Операторы SQL:
+***и или
+SELECT column1, column2....columnN
+FROM table_name
+WHERE CONDITION-1 {AND|OR} CONDITION-2;
+
+***между
+SELECT column1, column2....columnN
+FROM table_name
+WHERE column_name BETWEEN val-1 AND val-2;
+
+***тригер
+CREATE TRIGGER database_name.trigger_name 
+BEFORE INSERT ON table_name FOR EACH ROW
+BEGIN 
+   stmt1; 
+   stmt2;
+   ....
+END;
+
+***посчитать
+SELECT COUNT(column_name)
+FROM table_name
+WHERE CONDITION(условие);
+
+
+***особый уникальный
+SELECT DISTINCT column1, column2....columnN
+FROM table_name;
+
+***существует EXISTS
+SELECT column1, column2....columnN
+FROM table_name
+WHERE column_name EXISTS (SELECT * FROM   table_name );
+
+***GROUP BY
+SELECT SUM(column_name)
+FROM table_name
+WHERE CONDITION
+GROUP BY column_name;
+
+
+***HAVING имея
+SELECT SUM(column_name)
+FROM table_name
+WHERE CONDITION
+GROUP BY column_name
+HAVING (arithematic function condition);
+
+
+***IN
+SELECT column1, column2....columnN
+FROM table_name
+WHERE column_name IN (val-1, val-2,...val-N);
+
+
+***LIKE
+SELECT column1, column2....columnN
+FROM table_name
+WHERE column_name LIKE { PATTERN };
+
+***NOT IN нет в
+SELECT column1, column2....columnN
+FROM table_name
+WHERE column_name NOT IN (val-1, val-2,...val-N);
+
+
+***ORDER BY сортировка
+SELECT column1, column2....columnN
+FROM table_name
+WHERE CONDITION
+ORDER BY column_name {ASC|DESC};
+
+***UPDATE
+UPDATE table_name
+SET column1 = value1, column2 = value2....columnN=valueN
+[ WHERE  CONDITION ];
